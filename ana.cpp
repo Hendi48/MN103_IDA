@@ -8,29 +8,29 @@
 
 #include "mn103.hpp"
 
-static int ana_main(void);
+static int ana_main(insn_t &cmd);
 
 // core extension functions
-static int extF0(void);
-static int extF1(void);
-static int extF2(void);
-static int extF3(void);
-static int extF4(void);
-static int extF5(void);
-static int extF6(void);
-static int extF7(void);
-static int extF8(void);
-static int extF9(void);
-static int extFA(void);
-static int extFB(void);
-static int extFC(void);
-static int extFD(void);
-static int extFE(void);
-static int extFF(void);
+static int extF0(insn_t &cmd);
+static int extF1(insn_t &cmd);
+static int extF2(insn_t &cmd);
+static int extF3(insn_t &cmd);
+static int extF4(insn_t &cmd);
+static int extF5(insn_t &cmd);
+static int extF6(insn_t &cmd);
+static int extF7(insn_t &cmd);
+static int extF8(insn_t &cmd);
+static int extF9(insn_t &cmd);
+static int extFA(insn_t &cmd);
+static int extFB(insn_t &cmd);
+static int extFC(insn_t &cmd);
+static int extFD(insn_t &cmd);
+static int extFE(insn_t &cmd);
+static int extFF(insn_t &cmd);
 
 //----------------------------------------------------------------------
 
-static int extF0(void)
+static int extF0(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -65,7 +65,7 @@ static int extF0(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = 0;
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=2;
@@ -77,7 +77,7 @@ static int extF0(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = 0;
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=2;
 			break;
 		case 0x6:	// movhu (Am),Dn
@@ -85,7 +85,7 @@ static int extF0(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = 0;
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=2;
@@ -97,7 +97,7 @@ static int extF0(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = 0;
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=2;
 			break;
 		case 0x8:	// bset Dm,(An)
@@ -107,7 +107,7 @@ static int extF0(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = 0;
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=2;
 			break;
 		case 0x9:	// bclr Dm,(An)
@@ -117,7 +117,7 @@ static int extF0(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = 0;
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=2;
 			break;
 		case 0xa:
@@ -175,7 +175,7 @@ static int extF0(void)
 	return(cmd.size);
 }
 
-static int extF1(void)
+static int extF1(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -298,7 +298,7 @@ static int extF1(void)
 	return(cmd.size);
 }
 
-static int extF2(void)
+static int extF2(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -444,7 +444,7 @@ static int extF2(void)
 					cmd.itype= MN103_mov;
 					cmd.Op1.type = o_reg;
 					cmd.Op1.reg = PSW;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=2;
@@ -479,7 +479,7 @@ static int extF2(void)
 					cmd.Op1.reg = DN_2(b1);
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = PSW;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=2;
 					break;
 			}
@@ -490,7 +490,7 @@ static int extF2(void)
 	return(cmd.size);
 }
 
-static int extF3(void)
+static int extF3(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -546,7 +546,7 @@ static int extF3(void)
 	return(cmd.size);
 }
 
-static int extF4(void)
+static int extF4(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -606,7 +606,7 @@ static int extF4(void)
 }
 
 // udf20..35 Dm, Dn
-static int extF5(void)
+static int extF5(insn_t &cmd)
 {
 	ushort b1 ,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -642,7 +642,7 @@ static int extF5(void)
 	return(cmd.size);
 }
 // udf00..15 Dm, Dn
-static int extF6(void)
+static int extF6(insn_t &cmd)
 {
 	ushort b1,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -679,7 +679,7 @@ static int extF6(void)
 }
 
 // custom extension
-static int extF7(void)
+static int extF7(insn_t &cmd)
 {
 	cmd.size=4;
 	cmd.Op1.type = o_imm;
@@ -691,7 +691,7 @@ static int extF7(void)
 	return(cmd.size);
 }
 
-static int extF8(void)
+static int extF8(insn_t &cmd)
 {
 	ushort b1, n2, n1;
 	b1 = get_byte(cmd.ea+1);
@@ -705,7 +705,7 @@ static int extF8(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=3;
@@ -717,7 +717,7 @@ static int extF8(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=3;
 			break;
 		case 0x2:	// mov (d8,Am),An
@@ -725,7 +725,7 @@ static int extF8(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = AN_2(b1);
 			cmd.size=3;
@@ -737,7 +737,7 @@ static int extF8(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=3;
 			break;
 		case 0x4:	// movbu (d8,Am),Dn
@@ -745,7 +745,7 @@ static int extF8(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=3;
@@ -757,7 +757,7 @@ static int extF8(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=3;
 			break;
 		case 0x6:	// movhu (d8,Am),Dn
@@ -765,7 +765,7 @@ static int extF8(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=3;
@@ -777,7 +777,7 @@ static int extF8(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed char)get_byte(cmd.ea+2);
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=3;
 			break;
 		case 0x8:	// invalid!
@@ -795,7 +795,7 @@ static int extF8(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=3;
 					break;
 				case 0x3:	// movhu Dn,(d8,SP)
@@ -808,7 +808,7 @@ static int extF8(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=3;
 					break;
 			}
@@ -835,7 +835,7 @@ static int extF8(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = get_byte(cmd.ea+2);
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=3;
@@ -848,7 +848,7 @@ static int extF8(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = get_byte(cmd.ea+2);
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=3;
@@ -865,7 +865,7 @@ static int extF8(void)
 					cmd.itype= MN103_asl;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -877,7 +877,7 @@ static int extF8(void)
 					cmd.itype= MN103_lsr;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -889,7 +889,7 @@ static int extF8(void)
 					cmd.itype= MN103_asr;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -913,7 +913,7 @@ static int extF8(void)
 					cmd.itype = MN103_and;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -925,7 +925,7 @@ static int extF8(void)
 					cmd.itype = MN103_or;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -934,28 +934,28 @@ static int extF8(void)
 					cmd.itype = MN103_bvc;
 					cmd.Op1.type = o_near;
 					cmd.Op1.addr = cmd.ea+(signed char) get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.size = 3;
 					break;
 				case 0x9:	// bvs (d8,PC)
 					cmd.itype = MN103_bvs;
 					cmd.Op1.type = o_near;
 					cmd.Op1.addr = cmd.ea+(signed char) get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.size = 3;
 					break;
 				case 0xa:	// bnc (d8,PC)
 					cmd.itype = MN103_bnc;
 					cmd.Op1.type = o_near;
 					cmd.Op1.addr = cmd.ea+(signed char) get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.size = 3;
 					break;
 				case 0xb:	// bns (d8,PC)
 					cmd.itype = MN103_bns;
 					cmd.Op1.type = o_near;
 					cmd.Op1.addr = cmd.ea+(signed char) get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.size = 3;
 					break;
 				case 0xc:
@@ -965,7 +965,7 @@ static int extF8(void)
 					cmd.itype = MN103_btst;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 3;
@@ -983,7 +983,7 @@ static int extF8(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = get_byte(cmd.ea+2);
 					cmd.Op1.reg = AN_0(b1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = SP;
 					cmd.size=3;
@@ -998,7 +998,7 @@ static int extF8(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = AN_0(b1);
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=3;
 					break;
 				case 0x8:
@@ -1012,7 +1012,7 @@ static int extF8(void)
 					cmd.itype = MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = SP;
 					cmd.size = 3;
@@ -1026,7 +1026,7 @@ static int extF8(void)
 	return(cmd.size);
 }
 
-static int extF9(void)	// udf imm8,Dn
+static int extF9(insn_t &cmd)	// udf imm8,Dn
 {
 ushort b1;
 	int op1[16*4] = 
@@ -1054,7 +1054,7 @@ ushort b1;
 	cmd.itype = op1[b1>>2];
 	cmd.Op1.type = o_imm;
 	cmd.Op1.value = (signed char)get_byte(cmd.ea+2);
-	cmd.Op1.dtyp = dt_byte;
+	cmd.Op1.dtype = dt_byte;
 	cmd.Op2.type = o_reg;
 	cmd.Op2.reg = DN_0(b1);
 	cmd.size = 3;
@@ -1062,7 +1062,7 @@ ushort b1;
 	return(cmd.size);
 }
 
-static int extFA(void)
+static int extFA(insn_t &cmd)
 {
 	ushort b1,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -1078,7 +1078,7 @@ static int extFA(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=4;
@@ -1090,7 +1090,7 @@ static int extFA(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=4;
 			break;
 		case 0x2:	// mov (d16,Am),An
@@ -1098,7 +1098,7 @@ static int extFA(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = AN_2(b1);
 			cmd.size=4;
@@ -1110,7 +1110,7 @@ static int extFA(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=4;
 			break;
 		case 0x4:	// movbu (d16,Am),Dn
@@ -1118,7 +1118,7 @@ static int extFA(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=4;
@@ -1130,7 +1130,7 @@ static int extFA(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=4;
 			break;
 		case 0x6:	// movhu (d16,Am),Dn
@@ -1138,7 +1138,7 @@ static int extFA(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=4;
@@ -1150,7 +1150,7 @@ static int extFA(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed short)((get_byte(cmd.ea+3)<<8)+(get_byte(cmd.ea+2)));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=4;
 			break;
 		case 0x8:
@@ -1162,7 +1162,7 @@ static int extFA(void)
 					cmd.Op1.reg = AM_2(b1);
 					cmd.Op2.type = o_mem;
 					cmd.Op2.addr = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=4;
 					break;
 				case 1:
@@ -1181,7 +1181,7 @@ static int extFA(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=4;
 					break;
 				case 1:	// mov Dn,(d16,SP)
@@ -1191,7 +1191,7 @@ static int extFA(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=4;
 					break;
 				case 2:	// movbu Dn,(d16,SP)
@@ -1201,7 +1201,7 @@ static int extFA(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=4;
 					break;
 				case 3:	// movhu Dn,(d16,SP)
@@ -1211,7 +1211,7 @@ static int extFA(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=4;
 					break;
 			}
@@ -1223,7 +1223,7 @@ static int extFA(void)
 					cmd.itype= MN103_mov;
 					cmd.Op1.type = o_mem;
 					cmd.Op1.addr = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AN_0(b1);
 					cmd.size=4;
@@ -1242,7 +1242,7 @@ static int extFA(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AM_0(b1);
 					cmd.size=4;
@@ -1252,7 +1252,7 @@ static int extFA(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DM_0(b1);
 					cmd.size=4;
@@ -1262,7 +1262,7 @@ static int extFA(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DM_0(b1);
 					cmd.size=4;
@@ -1272,7 +1272,7 @@ static int extFA(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DM_0(b1);
 					cmd.size=4;
@@ -1286,7 +1286,7 @@ static int extFA(void)
 					cmd.itype = MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (signed short) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1297,7 +1297,7 @@ static int extFA(void)
 					cmd.itype = MN103_cmp;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (signed short) ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1313,7 +1313,7 @@ static int extFA(void)
 					cmd.itype = MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AN_0(b1);
 					cmd.size = 4;
@@ -1324,7 +1324,7 @@ static int extFA(void)
 					cmd.itype = MN103_cmp;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AN_0(b1);
 					cmd.size = 4;
@@ -1343,7 +1343,7 @@ static int extFA(void)
 					cmd.itype = MN103_and;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1355,7 +1355,7 @@ static int extFA(void)
 					cmd.itype = MN103_or;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = ((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1367,7 +1367,7 @@ static int extFA(void)
 					cmd.itype = MN103_xor;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1379,7 +1379,7 @@ static int extFA(void)
 					cmd.itype = MN103_btst;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size = 4;
@@ -1396,11 +1396,11 @@ static int extFA(void)
 					cmd.itype = MN103_bset;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+3);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = AN_0(b1);
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size = 4;
 					break;
 				case 0x4:
@@ -1410,11 +1410,11 @@ static int extFA(void)
 					cmd.itype = MN103_bclr;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+3);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = AN_0(b1);
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size = 4;
 					break;
 				case 0x8:
@@ -1424,38 +1424,38 @@ static int extFA(void)
 					cmd.itype = MN103_btst;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+3);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = get_byte(cmd.ea+2);
 					cmd.Op2.reg = AN_0(b1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.size = 4;
 					break;
 				case 0xc:	// and imm16,PSW
 					cmd.itype= MN103_and;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = PSW;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size= 4;
 					break;
 				case 0xd:	// or imm16,PSW
 					cmd.itype= MN103_or;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = PSW;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size= 4;
 					break;
 				case 0xe:	// add imm16,SP
 					cmd.itype= MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (signed short)((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = SP;
 					cmd.size= 4;
@@ -1473,7 +1473,7 @@ static int extFA(void)
 	return(cmd.size);
 }
 
-static int extFB(void)	// udf imm16,Dn
+static int extFB(insn_t &cmd)	// udf imm16,Dn
 {
 	ushort b1;
 	int op1[16*4] = 
@@ -1508,7 +1508,7 @@ static int extFB(void)	// udf imm16,Dn
 	{
 		cmd.Op1.value = (signed short)((get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 	}
-	cmd.Op1.dtyp = dt_word;
+	cmd.Op1.dtype = dt_word;
 	cmd.Op2.type = o_reg;
 	cmd.Op2.reg = DN_0(b1);
 	cmd.size = 4;
@@ -1516,7 +1516,7 @@ static int extFB(void)	// udf imm16,Dn
 	return(cmd.size);
 }
 
-static int extFC(void)
+static int extFC(insn_t &cmd)
 {
 	ushort b1 = get_byte(cmd.ea+1);
 	
@@ -1569,7 +1569,7 @@ static int extFC(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=6;
@@ -1581,7 +1581,7 @@ static int extFC(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=6;
 			break;
 		case 0x6:	// movhu (d32,Am),Dn
@@ -1589,7 +1589,7 @@ static int extFC(void)
 			cmd.Op1.type = o_displ;
 			cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 			cmd.Op1.reg = AM_0(b1);
-			cmd.Op1.dtyp = dt_word;
+			cmd.Op1.dtype = dt_word;
 			cmd.Op2.type = o_reg;
 			cmd.Op2.reg = DN_2(b1);
 			cmd.size=6;
@@ -1601,7 +1601,7 @@ static int extFC(void)
 			cmd.Op2.type = o_displ;
 			cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 			cmd.Op2.reg = AN_0(b1);
-			cmd.Op2.dtyp = dt_word;
+			cmd.Op2.dtype = dt_word;
 			cmd.size=6;
 			break;
 		case 0x8:
@@ -1629,7 +1629,7 @@ static int extFC(void)
 					cmd.Op1.reg = DN_2(b1);
 					cmd.Op2.type = o_mem;
 					cmd.Op2.addr = (get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=6;
 					break;
 				case 3:	// movhu Dn,(abs32)
@@ -1638,7 +1638,7 @@ static int extFC(void)
 					cmd.Op1.reg = DN_2(b1);
 					cmd.Op2.type = o_mem;
 					cmd.Op2.addr = (get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=6;
 					break;
 			}
@@ -1671,7 +1671,7 @@ static int extFC(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=6;
 					break;
 				case 3:	// movhu Dn,(d32,SP)
@@ -1681,7 +1681,7 @@ static int extFC(void)
 					cmd.Op2.type = o_displ;
 					cmd.Op2.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op2.reg = SP;
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=6;
 					break;
 			}
@@ -1709,7 +1709,7 @@ static int extFC(void)
 					cmd.itype = MN103_movbu;
 					cmd.Op1.type = o_mem;
 					cmd.Op1.addr = (get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=6;
@@ -1718,7 +1718,7 @@ static int extFC(void)
 					cmd.itype = MN103_movhu;
 					cmd.Op1.type = o_mem;
 					cmd.Op1.addr = (get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=6;
@@ -1751,7 +1751,7 @@ static int extFC(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=6;
@@ -1761,7 +1761,7 @@ static int extFC(void)
 					cmd.Op1.type = o_displ;
 					cmd.Op1.addr = (signed long) ((get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2));
 					cmd.Op1.reg = SP;
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=6;
@@ -1858,7 +1858,7 @@ static int extFC(void)
 	return(cmd.size);
 }
 
-static int extFD(void)	// udf imm32,Dn
+static int extFD(insn_t &cmd)	// udf imm32,Dn
 {
 ushort b1;
 	int op1[16*4] = 
@@ -1893,7 +1893,7 @@ ushort b1;
 	return(cmd.size);
 }
 
-static int extFE(void)
+static int extFE(insn_t &cmd)
 {
 	ushort b1,n2,n1;
 	b1 = get_byte(cmd.ea+1);
@@ -1917,10 +1917,10 @@ static int extFE(void)
 			}
 			cmd.Op1.type = o_imm;
 			cmd.Op1.value = get_byte(cmd.ea+6);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_mem;
 			cmd.Op2.addr = (get_byte(cmd.ea+5)<<24)+(get_byte(cmd.ea+4)<<16)+(get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=7;
 			break;
 		case 8:
@@ -1938,10 +1938,10 @@ static int extFE(void)
 			}
 			cmd.Op1.type = o_imm;
 			cmd.Op1.value = get_byte(cmd.ea+4);
-			cmd.Op1.dtyp = dt_byte;
+			cmd.Op1.dtype = dt_byte;
 			cmd.Op2.type = o_mem;
 			cmd.Op2.addr = (get_byte(cmd.ea+3)<<8)+get_byte(cmd.ea+2);
-			cmd.Op2.dtyp = dt_byte;
+			cmd.Op2.dtype = dt_byte;
 			cmd.size=5;
 			break;
 	}
@@ -1950,7 +1950,7 @@ static int extFE(void)
 }
 
 // invalid
-static int extFF(void)
+static int extFF(insn_t &cmd)
 {
 	cmd.size=1;
 	return(cmd.size);
@@ -1958,10 +1958,10 @@ static int extFF(void)
 
 
 // main routine for analysing an instructions
-static int ana_main(void)
+static int ana_main(insn_t &cmd)
 {
 	// get next byte to analyse
-	ushort b1 = ua_next_byte();
+	ushort b1 = cmd.get_next_byte();
 	
 	// split the byte high and low 4bits
 	ushort n1 = (b1 >> 4);
@@ -1994,20 +1994,20 @@ static int ana_main(void)
 					cmd.itype = MN103_movbu;
 					cmd.Op1.type = o_reg;
 					cmd.Op1.reg = DM_2(b1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_mem;
 					cmd.Op2.addr = (get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1);
-					cmd.Op2.dtyp = dt_byte;
+					cmd.Op2.dtype = dt_byte;
 					cmd.size=3;
 					break;
 				case 3: // movhu Dm, (abs16)
 					cmd.itype = MN103_movhu;
 					cmd.Op1.type = o_reg;
 					cmd.Op1.reg = DM_2(b1);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_mem;
 					cmd.Op2.addr = (get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1);
-					cmd.Op2.dtyp = dt_word;
+					cmd.Op2.dtype = dt_word;
 					cmd.size=3;
 					break;
 			}
@@ -2045,7 +2045,7 @@ static int ana_main(void)
 					cmd.itype= MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AN_0(b1);
 					cmd.size= 2;
@@ -2054,7 +2054,7 @@ static int ana_main(void)
 					cmd.itype= MN103_mov;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = AN_0(b1);
 					cmd.size= 3;
@@ -2063,7 +2063,7 @@ static int ana_main(void)
 					cmd.itype= MN103_add;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = get_byte(cmd.ea+1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size= 2;
@@ -2072,7 +2072,7 @@ static int ana_main(void)
 					cmd.itype= MN103_mov;
 					cmd.Op1.type = o_imm;
 					cmd.Op1.value = (signed short)((get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1));
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size= 3;
@@ -2095,7 +2095,7 @@ static int ana_main(void)
 					cmd.itype= MN103_movbu;
 					cmd.Op1.type = o_mem;
 					cmd.Op1.addr = (get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1);
-					cmd.Op1.dtyp = dt_byte;
+					cmd.Op1.dtype = dt_byte;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=3;
@@ -2104,7 +2104,7 @@ static int ana_main(void)
 					cmd.itype= MN103_movhu;
 					cmd.Op1.type = o_mem;
 					cmd.Op1.addr = (get_byte(cmd.ea+2)<<8)+get_byte(cmd.ea+1);
-					cmd.Op1.dtyp = dt_word;
+					cmd.Op1.dtype = dt_word;
 					cmd.Op2.type = o_reg;
 					cmd.Op2.reg = DN_0(b1);
 					cmd.size=3;
@@ -2214,7 +2214,7 @@ static int ana_main(void)
 				// mov imm8,Dn
 				cmd.Op1.type = o_imm;
 				cmd.Op1.value = get_byte(cmd.ea+1);
-				cmd.Op1.dtyp = dt_byte;
+				cmd.Op1.dtype = dt_byte;
 				cmd.size=2;
 			}
 			else
@@ -2234,7 +2234,7 @@ static int ana_main(void)
 				// mov imm8,An
 				cmd.Op1.type = o_imm;
 				cmd.Op1.value = get_byte(cmd.ea+1);
-				cmd.Op1.dtyp = dt_byte;
+				cmd.Op1.dtype = dt_byte;
 				cmd.size=2;
 			}
 			else
@@ -2254,7 +2254,7 @@ static int ana_main(void)
 				// cmp imm8,Dn
 				cmd.Op1.type = o_imm;
 				cmd.Op1.value = get_byte(cmd.ea+1);
-				cmd.Op1.dtyp = dt_byte;
+				cmd.Op1.dtype = dt_byte;
 				cmd.size=2;
 			}
 			else
@@ -2274,7 +2274,7 @@ static int ana_main(void)
 				// cmp imm8,An
 				cmd.Op1.type = o_imm;
 				cmd.Op1.value = get_byte(cmd.ea+1);
-				cmd.Op1.dtyp = dt_byte;
+				cmd.Op1.dtype = dt_byte;
 				cmd.size=2;
 			}
 			else
@@ -2403,7 +2403,7 @@ static int ana_main(void)
 
 						cmd.Op2.type = o_imm;
 						cmd.Op2.value = get_byte(cmd.ea+2);
-						cmd.Op2.dtyp = dt_byte;
+						cmd.Op2.dtype = dt_byte;
 
 						cmd.size=3;
 						break;
@@ -2422,52 +2422,52 @@ static int ana_main(void)
 			switch(n2)
 			{
 				case 0x0:
-					cmd.size=extF0();
+					cmd.size=extF0(cmd);
 					break;
 				case 0x1:
-					cmd.size=extF1();
+					cmd.size=extF1(cmd);
 					break;
 				case 0x2:
-					cmd.size=extF2();
+					cmd.size=extF2(cmd);
 					break;
 				case 0x3:
-					cmd.size=extF3();
+					cmd.size=extF3(cmd);
 					break;
 				case 0x4:
-					cmd.size=extF4();
+					cmd.size=extF4(cmd);
 					break;
 				case 0x5:
-					cmd.size=extF5();
+					cmd.size=extF5(cmd);
 					break;
 				case 0x6:
-					cmd.size=extF6();
+					cmd.size=extF6(cmd);
 					break;
 				case 0x7:
-					cmd.size=extF7();
+					cmd.size=extF7(cmd);
 					break;
 				case 0x8:
-					cmd.size=extF8();
+					cmd.size=extF8(cmd);
 					break;
 				case 0x9:
-					cmd.size=extF9();
+					cmd.size=extF9(cmd);
 					break;
 				case 0xa:
-					cmd.size=extFA();
+					cmd.size=extFA(cmd);
 					break;
 				case 0xb:
-					cmd.size=extFB();
+					cmd.size=extFB(cmd);
 					break;
 				case 0xc:
-					cmd.size=extFC();
+					cmd.size=extFC(cmd);
 					break;
 				case 0xd:
-					cmd.size=extFD();
+					cmd.size=extFD(cmd);
 					break;
 				case 0xe:
-					cmd.size=extFE();
+					cmd.size=extFE(cmd);
 					break;
 				case 0xf:
-					cmd.size=extFF();
+					cmd.size=extFF(cmd);
 					break;
 			}
 			break;
@@ -2480,8 +2480,9 @@ static int ana_main(void)
 // this is the externally accessable routine that analyses an instruction
 // returns: size of command, or 0
 
-int ana(void)
+int ana(insn_t *_insn)
 {
+	insn_t &cmd = *_insn;
 	cmd.itype = 0; // opcode
 	// cmd.auxpref |= aux_1ext; ?
 	// addr mode (o_imm, o_near, o_reg, o_mem, o_phrase, o_bit, o_bitnot
@@ -2504,10 +2505,10 @@ int ana(void)
 	
 	// set all to data types to initiall be 'dword' since processor is 32bit
 	// these will get updated in ana_main() if they are not 32bit
-	cmd.Op1.dtyp = dt_dword;
-	cmd.Op2.dtyp = dt_dword;
-	cmd.Op3.dtyp = dt_dword;
+	cmd.Op1.dtype = dt_dword;
+	cmd.Op2.dtype = dt_dword;
+	cmd.Op3.dtype = dt_dword;
 	
 	cmd.size = 0;
-	return ana_main();
+	return ana_main(cmd);
 }

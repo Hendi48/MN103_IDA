@@ -1,3 +1,7 @@
+09/08/2021
+	- updated to IDA 7.0 API
+	- provide project files for VS2022
+
 07/03/2006
 	- added some tweaks to reg.cpp that make compiling on 4.8 easier
 	- added msvc8 project files (provided by loser)

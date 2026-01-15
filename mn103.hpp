@@ -9,19 +9,6 @@
 #ifndef _MN103_HPP
 #define _MN103_HPP
 
-// uncomment this for ida v4.8 support
-//#define IDA_48
-// uncomment this for ida v4.9 support
-#define IDA_49
-// comment out both lines above for v4.7 support
-
-// ensure that for IDA_49 all changes for IDA_48 are taken also into consideration
-#ifdef IDA_49
- #ifndef IDA_48
-   #define IDA_48
- #endif
-#endif
-
 #include "../idaidp.hpp"
 #include "ins.hpp"
 #include <diskio.hpp>
@@ -66,13 +53,10 @@ enum processor_subtype_t
 };
 
 extern processor_subtype_t ptype;
-extern char device[];
-extern char deviceparams[];
- 
-//extern ea_t intmem;               // address of the internal memory
-//extern ea_t sfrmem;               // address of SFR memory
+extern qstring device;
+extern qstring deviceparams;
 
-ea_t map_addr(ulong off, int opnum, bool isdata);
+const ioport_bit_t *find_bit(ea_t address, int bit);
 
 //------------------------------------------------------------------------
 // Registers
@@ -87,22 +71,16 @@ enum mn103_registers
   rVcs, rVds            // these 2 registers are required by the IDA kernel
 };
 
-const ioport_t *find_sym(int address);
-const ioport_bit_t *find_bit(int address, int bit);
-bool IsPredefined(const char *name);
-
 //------------------------------------------------------------------------
-void    header(void);
-void    footer(void);
+void    idaapi mn103_header(outctx_t &ctx);
+void    idaapi mn103_footer(outctx_t &ctx);
 
-void    segstart(ea_t ea);
+void    idaapi mn103_segstart(outctx_t &ctx, segment_t *seg);
 
-int     ana(void);
-int     emu(void);
-void    out(void);
-bool    outop(op_t &op);
+int     ana(insn_t *_insn);
+int     emu(const insn_t &insn);
 
-void    mn103_data(ea_t ea);
+void    idaapi mn103_data(outctx_t &ctx, bool analyze_only);
  
 #endif
 

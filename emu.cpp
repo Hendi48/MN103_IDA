@@ -28,48 +28,29 @@ enum opRefType {
 //        because such an operand is likely a plain number rather than
 //        an offset or of another type.
 
-static void doImmdValue(int n)
+static void set_immd_bit(const insn_t &insn, int n)
 {
-  doImmd(cmd.ea);
-  switch ( cmd.itype )
+  set_immd(insn.ea);
+  switch ( insn.itype )
   {
     case MN103_and:
     case MN103_or:
     case MN103_xor:
-      op_num(cmd.ea,1);
-//    op_num(cmd.ea,n);
+      op_num(insn.ea,1);
+//    op_num(insn.ea,n);
       break;
 //  case MN103_mov:
-//      op_dec(cmd.ea, n);
+//      op_dec(insn.ea, n);
 //      break;
   }
-  uFlag = getFlags(cmd.ea);             // refresh uFlag with new flags
 }
 
 //----------------------------------------------------------------------
-static void attach_bit_comment(int addr, int bit)
+static void attach_bit_comment(const insn_t &insn, ea_t addr, int bit)
 {
   const ioport_bit_t *predef = find_bit(addr, bit);
-#ifdef IDA_49
-  if ( predef != NULL && get_cmt(cmd.ea, false, NULL,0) <= 0 )
-#else
-  if ( predef != NULL && get_cmt(cmd.ea, false) == NULL )
-#endif
-    set_cmt(cmd.ea, predef->cmt, false);
-}
-
-//----------------------------------------------------------------------
-// Calculate the target data address
-ea_t map_addr(ulong off, int opnum, bool isdata)
-{
-#if 0	
-  if ( isdata ) 
-  {
-    if ( isOff(uFlag, opnum) ) return get_offbase(cmd.ea, opnum) >> 4;
-    return ((off >= 0x80 && off < 0x100) ? sfrmem : intmem) + off;
-  }
-#endif
-  return toEA(codeSeg(off, opnum), off);
+  if ( predef != NULL && get_cmt(NULL, insn.ea, false) <= 0 )
+    set_cmt(insn.ea, predef->cmt.c_str(), false);
 }
 
 //----------------------------------------------------------------------
@@ -81,8 +62,10 @@ ea_t map_addr(ulong off, int opnum, bool isdata)
 //        create stack variables)
 //      - anything else you might need to emulate or trace
 
-static void handle_operand(op_t &x, int loading /* 1: use 0: change */)
+static void handle_operand(const insn_t &insn, const op_t &x, int loading /* 1: use 0: change */)
 {
+	ea_t ea = map_code_ea(insn, x);
+	flags_t F = get_flags(insn.ea);
 	switch ( x.type )
 	{
 		// no special handling for these types
@@ -95,54 +78,38 @@ static void handle_operand(op_t &x, int loading /* 1: use 0: change */)
 		case o_imm:
 			// can't write to an immediate value
 			if ( loading == hop_WRITE ) goto BAD_LOGIC;
-			doImmdValue(x.n);
+			set_immd_bit(insn, x.n);
 			
 			// if the value was converted to an offset, then create a data xref:
-			if ( isOff(uFlag, x.n) )
+			if ( op_adds_xrefs(F, x.n) )
 			{
-				ua_add_off_drefs(x, dr_O);
+				insn.add_off_drefs(x, dr_O, OOFS_IFSIGN);
 			}
 			// if the value is in range of the program, create a data xref:
-//			else if( isEnabled(x.value) )
+//			else if( is_mapped(x.value) )
 //			{
 //				ua_add_dref(/*x.offb*/0, x.value, (loading==hop_READ)?dr_R:dr_W);
 //			}
 			break;
 		
 		case o_displ:
-			doImmdValue(x.n);                    // handle immediate number
+			set_immd_bit(insn, x.n);                    // handle immediate number
 			
 			// if the value was converted to an offset, then create a data xref:
-			if ( isOff(uFlag, x.n) ) ua_add_off_drefs(x, loading?dr_R:dr_W);
+			if ( op_adds_xrefs(F, x.n) )
+			  insn.add_off_drefs(x, loading ? dr_R : dr_W, OOFS_IFSIGN|OOF_ADDR); // FIXME loading == hop_READ?
 			break;
-			
-		case o_bit:                         // 8051 specific operand types - bits
-//		case o_bitnot:
-			x.addr = (x.reg & 0xF8);
-			if( (x.addr & 0x80) == 0 ) x.addr = x.addr/8 + 0x20;
-			attach_bit_comment(x.addr, x.reg & 7);  // attach a comment if necessary
-//			goto MEM_XREF;
-		
-//		case o_bit251:
-//			attach_bit_comment(x.addr, x.b251_bit);
-			/* no break */
-		
+
 		case o_mem:                         // an ordinary memory data reference
-//MEM_XREF:
-			{
-				ea_t dea = map_addr(x.addr, x.n, true);
-				ua_dodata(dea, x.dtyp);
-				if ( !loading ) doVar(dea);     // write access
-				ua_add_dref(x.offb, dea, loading ? dr_R : dr_W);
-			}
+			insn.create_op_data(ea, x);
+			insn.add_dref(ea, x.offb, loading == hop_READ ? dr_R : dr_W);
 			break;
 
 		case o_far:                         // a code reference
 		case o_near:                        // a code reference
 		{
-			ea_t ea = map_addr(x.addr, x.n, false);
-			int iscall = InstrIsSet(cmd.itype, CF_CALL);
-			ua_add_cref(x.offb, ea, iscall ? fl_CN : fl_JN);
+			int iscall = has_insn_feature(insn.itype, CF_CALL);
+			insn.add_cref(ea, x.offb, iscall ? fl_CN : fl_JN);
 			if ( flow && iscall )
 			{
 				func_t *pfn = get_func(ea);
@@ -153,7 +120,7 @@ static void handle_operand(op_t &x, int loading /* 1: use 0: change */)
 		
 		default:
 BAD_LOGIC:
-			warning("%a (%s): bad logic (emu.cpp)", cmd.ea, Instructions[cmd.itype].name);
+			warning("%a (%s): bad logic (emu.cpp)", insn.ea, Instructions[insn.itype].name);
 			break;
 	}
 }
@@ -190,38 +157,23 @@ BAD_LOGIC:
 //
 // This sample emu() function is a very simple emulation engine.
 
-int emu(void)
+int emu(const insn_t &insn)
 {
-  int Feature = Instructions[cmd.itype].feature;
+  uint32 Feature = insn.get_canon_feature();
   flow = ((Feature & CF_STOP) == 0);
 
-  // you may emulate selected instructions with a greater care:
-//  switch ( cmd.itype )
-//  {
-//    case MN103_mov:
-//      if ( cmd.Op1.type == o_mem && cmd.Op1.addr == 0x81 )  // mov SP, #num
-//      {
-//        if ( cmd.Op2.type == o_imm && !isDefArg(uFlag,1) )
-//          set_offset(cmd.ea,1,intmem);             // convert it to an offset
-//      }
-//      break;
-//    case MN103_trap:
-//      ua_add_cref(0, 0x7B, fl_CN);
-//      break;
-//  }
-
   // operands that are read
-  if ( Feature & CF_USE1 ) handle_operand(cmd.Op1, hop_READ);
-  if ( Feature & CF_USE2 ) handle_operand(cmd.Op2, hop_READ);
-  if ( Feature & CF_USE3 ) handle_operand(cmd.Op3, hop_READ);
+  if ( Feature & CF_USE1 ) handle_operand(insn, insn.Op1, hop_READ);
+  if ( Feature & CF_USE2 ) handle_operand(insn, insn.Op2, hop_READ);
+  if ( Feature & CF_USE3 ) handle_operand(insn, insn.Op3, hop_READ);
 
   // operands that are written
-  if ( Feature & CF_CHG1 ) handle_operand(cmd.Op1, hop_WRITE);
-  if ( Feature & CF_CHG2 ) handle_operand(cmd.Op2, hop_WRITE);
-  if ( Feature & CF_CHG3 ) handle_operand(cmd.Op3, hop_WRITE);
+  if ( Feature & CF_CHG1 ) handle_operand(insn, insn.Op1, hop_WRITE);
+  if ( Feature & CF_CHG2 ) handle_operand(insn, insn.Op2, hop_WRITE);
+  if ( Feature & CF_CHG3 ) handle_operand(insn, insn.Op3, hop_WRITE);
 
   // let IDA know that instruction makes a branch
-  if ( Feature & CF_JUMP ) QueueMark(Q_jumps,cmd.ea);
+  if ( Feature & CF_JUMP ) remember_problem(PR_JUMP, insn.ea);
  
   // if the execution flow is not stopped here, then create
   // a xref to the next instruction.
@@ -229,7 +181,7 @@ int emu(void)
 
   if ( flow )
   {
-	  ua_add_cref(0,cmd.ea+cmd.size,fl_F);
+	  add_cref(insn.ea, insn.ea+insn.size, fl_F);
   }
 
   return 1;    // actually the return value is unimportant, but let's it be so
