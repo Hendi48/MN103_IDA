@@ -1,0 +1,9 @@
+
+- extended 0xf7 opcodes are missing, these are "vendor extensions" according
+  to the datasheet. 
+- extended 0xff opcodes are missing, these are "invalid" according to the
+  datasheet, but appearently still used.
+- all "user defined" opcodes are disassembled as such, should probably be
+  disassembled in "clear text" once they are figured out
+- the mn103.cfg is bogus... edit it to whatever you want, and use it if you like :)
+

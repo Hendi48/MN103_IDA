@@ -1,0 +1,11 @@
+mn103 plugin for IDA
+
+just some quick notes:
+
+- the plugin was developed using IDA 4.7, so if you have that it should
+  compile out of the box.
+- if you have IDA 4.8 look at the comments in the code and modify it
+  accordingly (uncomment the #define IDA_48 in reg.cpp)
+- after compiling install the module in IDAs proc subdirectoy
+
+if you get a "Bad Logic" warning, please report!

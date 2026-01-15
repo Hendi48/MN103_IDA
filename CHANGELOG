@@ -1,0 +1,47 @@
+07/03/2006
+	- added some tweaks to reg.cpp that make compiling on 4.8 easier
+	- added msvc8 project files (provided by loser)
+
+16/02/2006
+	- fixed opcodes 0xf8nn, opcodes 0xfann , opcodes 0xfcnn (displacement 
+	  was incorrect), bug reported by anita999
+	- fixed generation of data xref for btst, bug reported by anita999
+	- fixed entry_t struct (entrypoint was declared as "char", ouch)
+
+28/01/2006
+	- fixed "OR Imm, Dn", was incorrectly disassembled as "AND Imm, Dn",
+	bug reported by TheSpecialist, marvin 
+	- fixed some feature descriptions in ins.cpp, affected opcodes were
+	retf, ret, rets, trap. (now analysing stops at those opcodes, leading
+	to more accurate code/data seperation)
+
+23/01/2006
+	- fixed opcodes 0xf0 0x4n (movbu) and 0xf0 0x6n (movhu), bug
+	reported by zobyone
+
+20/01/2006
+	- fixed instructions which used sign-extended 16bit arguments,
+	bug reported by TheSpecialist:
+
+	affected instructions were: MOV, CALL, ADD, CMP, JMP, CALLS, UDF
+
+	- enabled "bad logic" warning to catch some possible mistakes
+
+	- data xrefs on immediate operands are automatically created
+
+19/01/2006
+	- added READNE, TODO, CHANGELOG
+	- fixed CALL (opcodes 0xcd and 0xdd), bug reported by TheSpecialist:
+
+	0xcd was incorrectly disassembled as a 3 byte instruction as in
+		call d16
+	but it should be a 5 byte instruction as in
+		call d16,[regs],imm8
+
+	0xdd was incorrectly disassembled as a 5 byte instruction as in
+		call d32
+	but it should be a 7 byte instruction as in
+		call d32,[regs],imm8
+
+14/01/2006
+	- initial release
